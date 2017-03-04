@@ -50,6 +50,7 @@ public class CreatePost extends HttpServlet {
         
         BufferedWriter out = new BufferedWriter(new FileWriter(file, true));
         // Write to the file using the BufferedWriter
+        // writeln()
         out.write(content + "\n");
         out.close();
         

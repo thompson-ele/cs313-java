@@ -30,10 +30,6 @@
                         </div>
                         <input type="submit" value="Sign In" class="btn btn-primary">
                     </form>
-                    
-                    <c:forEach var="user" items="${users}" >
-                        <p><strong>User:</strong> ${user.username} <strong>Password:</strong> ${user.password}</p>
-                    </c:forEach>
                 </div>
             </div>
         </div>

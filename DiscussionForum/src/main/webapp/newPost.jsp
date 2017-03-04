@@ -16,7 +16,7 @@
     <body>
         <div class="container">
             <div class="row">
-                <p class="pull-right alert alert-success col-sm-1">${username} is logged in</p>
+                <p class="pull-right alert alert-success">${username} is logged in</p>
             </div>
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">

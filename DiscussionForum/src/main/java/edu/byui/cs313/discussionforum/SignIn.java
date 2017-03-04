@@ -1,7 +1,6 @@
 package edu.byui.cs313.discussionforum;
 
 import edu.byui.cs313.discussionforum.model.Post;
-import edu.byui.cs313.discussionforum.model.User;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -28,31 +27,7 @@ public class SignIn extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Create a list array to store each username and password in
-        // from the file
-        List<User> users = new ArrayList<User>();
-        
-        // Declare the file path
-        File file = new File(getServletContext().getRealPath("/") + "login.txt");
-        
-        // If the file doesn't already exist, create a new one
-        if(!file.exists()) {
-            file.createNewFile();
-        }
-        
-        // Create the file reader
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        
-        // Read the file
-        String line;
-        while((line = reader.readLine()) != null) {
-            User user = new User();
-            user.setUsername(line);
-            user.setPassword(line);
-            users.add(user);         // Add post to the array
-        }
-        request.setAttribute("users", users);
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        response.sendRedirect("login.jsp");
     }
 
     /**
@@ -65,54 +40,22 @@ public class SignIn extends HttpServlet {
         // Get form input
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+              
+        // Declare correct username and password
+        String correctUsername = "ele";
+        String correctPassword = "cs313";
         
-        // Create a list array to store each username and password in
-        // from the file
-        List<User> users = new ArrayList<User>();
-        
-        // Declare the file path
-        File file = new File(getServletContext().getRealPath("/") + "login.txt");
-        
-        // If the file doesn't already exist, create a new one
-        if(!file.exists()) {
-            file.createNewFile();
-        }
-        
-        // Create the file reader
-        BufferedReader reader = new BufferedReader(new FileReader(file));
-        
-        // Read the file
-        String line;
-        while((line = reader.readLine()) != null) {
-            User user = new User();
-            user.loadFromFileString(line);
-            users.add(user);         // Add post to the array
-        }
-        
-        // Compare form input with saved usernames and passwords
-        for(User user : users) {
-            if(user.comparePasswords(username, password)) {
-                // Create new session variable
-                request.getSession().setAttribute("username", username);
-                // Redirect to new post page
-                response.sendRedirect("newPost.jsp");
-            }
-        }
-        
-        // Incorrect username/passord
-        // Redirect to incorrect login page
-        response.sendRedirect("incorrectLogin.jsp");
-        
-        //if(username.equals(correctUsername) && password.equals(correctPassword)) {
+        // Compare username and password to correct values
+        if(username.equals(correctUsername) && password.equals(correctPassword)) {
             // Create new session variable
-            //request.getSession().setAttribute("username", username);
+            request.getSession().setAttribute("username", username);
             // Redirect to new post page
-            //response.sendRedirect("newPost.jsp");
-        //} else {
+            response.sendRedirect("newPost.jsp");
+        } else {
             // Incorrect username/passord
             // Redirect to incorrect login page
-            //response.sendRedirect("incorrectLogin.jsp");
-        //}
+            response.sendRedirect("incorrectLogin.jsp");
+        }
     }
 
 }

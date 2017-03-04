@@ -18,6 +18,10 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-sm-offset-2">
+                    <div class="row">
+                        <p class="pull-right alert alert-success">${username} is logged in</p>
+                    </div>
+                    
                     <h1>View Posts</h1>
                     
                     <a href="newPost.jsp" class="btn btn-success">Create a New Post</a>
