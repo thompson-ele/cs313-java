@@ -2,7 +2,13 @@ package edu.cs313.byui.jdbctutorial;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -13,10 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author 0249239
+ * @author Ele Thompson
  */
-@WebServlet(name = "Persons", urlPatterns = {"/Persons"})
-public class Persons extends HttpServlet {
+@WebServlet(name = "Person", urlPatterns = {"/Person"})
+public class Person extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -25,7 +31,6 @@ public class Persons extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             // Load JDBC driver classes
             Class.forName("org.postgresql.Driver");
@@ -38,8 +43,26 @@ public class Persons extends HttpServlet {
                 Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ancestors", "postgres", "postgres");    
                 // Start a prepared statement
                 Statement statement = connection.createStatement();
-                // Results from the query
-                ResultSet resultSet = statement.executeQuery("SELECT id, name, birthday FROM person");
+                Statement childStatement = connection.createStatement();
+                
+                // Get the person's id from the URL
+                int person_id = Integer.parseInt(request.getParameter("id"));
+                // Get the information for the main person
+                String SQL = "SELECT id, name, birthday FROM person " +
+                             "WHERE id = " + person_id;
+                ResultSet resultSet = statement.executeQuery(SQL);
+                
+                // Results from the query - TODO: ADJUST QUERY TO GRAB USER DETAILS AND ALL THEIR KIDS
+                ResultSet childrenResultSet = childStatement.executeQuery("[QUERY GOES HERE]");
+                
+                /*
+                --> QUERY TO GET ALL THE CHILDRENS
+                SELECT person.id, person.name
+                FROM person
+                INNER JOIN childof
+                ON person.id = childof.child_id
+                WHERE parent_id = ?;
+                */
 
             // Print out to the page
             response.setContentType("text/html;charset=UTF-8");
@@ -51,15 +74,18 @@ public class Persons extends HttpServlet {
                 out.println("<title>Servlet Persons</title>");            
                 out.println("</head>");
                 out.println("<body>");
-                out.println("<h1>JDBC Tutorial - Persons</h1>");
+                out.println("<h1>Person Page</h1>");
 
+                // Get persons information and print it out
+                
+                
+                // Print out a list of the childrens
+                while(childrenResultSet.next()) {
+                    int id = childrenResultSet.getInt("id");
+                    String name = childrenResultSet.getString("name");
+                    Date birthday = childrenResultSet.getDate("birthday");
 
-                while(resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String name = resultSet.getString("name");
-                    Date birthday = resultSet.getDate("birthday");
-
-                    out.println("<p><a href='Person?id="+ id +"'>" + name + " - " + birthday + "</p>");
+                    out.println("<p><a href='/Person?id="+ id +"'>" + name + " - " + birthday + "</p>");
                 }
 
                 out.println("</body>");
@@ -69,13 +95,16 @@ public class Persons extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(Persons.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -86,6 +115,10 @@ public class Persons extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
