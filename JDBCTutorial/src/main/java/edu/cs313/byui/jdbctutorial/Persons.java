@@ -25,7 +25,6 @@ public class Persons extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         try {
             // Load JDBC driver classes
             Class.forName("org.postgresql.Driver");
@@ -33,13 +32,14 @@ public class Persons extends HttpServlet {
             Logger.getLogger(Persons.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        Connection connection = null;
         try {
-                // Create connection getConnection(server location, username, password)
-                Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ancestors", "postgres", "postgres");    
-                // Start a prepared statement
-                Statement statement = connection.createStatement();
-                // Results from the query
-                ResultSet resultSet = statement.executeQuery("SELECT id, name, birthday FROM person");
+            // Create connection getConnection(server location, username, password)
+            connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ancestors", "postgres", "postgres");
+            // Start a prepared statement
+            Statement statement = connection.createStatement();
+            // Results from the query
+            ResultSet resultSet = statement.executeQuery("SELECT id, name, birthday FROM person");
 
             // Print out to the page
             response.setContentType("text/html;charset=UTF-8");
@@ -48,18 +48,17 @@ public class Persons extends HttpServlet {
                 out.println("<!DOCTYPE html>");
                 out.println("<html>");
                 out.println("<head>");
-                out.println("<title>Servlet Persons</title>");            
+                out.println("<title>Servlet Persons</title>");
                 out.println("</head>");
                 out.println("<body>");
                 out.println("<h1>JDBC Tutorial - Persons</h1>");
 
-
-                while(resultSet.next()) {
+                while (resultSet.next()) {
                     int id = resultSet.getInt("id");
                     String name = resultSet.getString("name");
                     Date birthday = resultSet.getDate("birthday");
 
-                    out.println("<p><a href='Person?id="+ id +"'>" + name + " - " + birthday + "</p>");
+                    out.println("<p><a href='Person?id=" + id + "'>" + name + " - " + birthday + "</a></p>");
                 }
 
                 out.println("</body>");
@@ -67,9 +66,16 @@ public class Persons extends HttpServlet {
             }
 
         } catch (SQLException ex) {
+            PrintWriter out = response.getWriter();
+            out.println(ex);
             Logger.getLogger(Persons.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(Persons.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
