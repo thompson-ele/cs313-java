@@ -18,6 +18,15 @@ public class Tester {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("week12Jpa");
         EntityManager em = emf.createEntityManager();
         
+        // Add genre's to the Genre table
+//        em.getTransaction().begin();
+//        Genre genre = em.find(Genre.class, 2);
+//        Book newbook = em.find(Book.class, 5);
+//        newbook.setGenre(genre);
+//        
+//        em.persist(newbook);
+//        em.getTransaction().commit();
+        
 //        // ADDING A NEW BOOK
 //        em.getTransaction().begin();
 //        Book newBook = new Book();
@@ -43,7 +52,7 @@ public class Tester {
             
             // Print out all the author's books
             for(Book book : author.getBooks()) {
-                System.out.println("\t Book: " + book.getTitle());
+                System.out.println("\t Book: " + book.getTitle() + "\t Genre: " + book.getGenre().getName());
             }
         }
         

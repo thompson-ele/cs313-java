@@ -20,6 +20,8 @@ public class Book {
     // Declare a many-to-one relationship with the author class
     @ManyToOne
     private Author author;
+    @ManyToOne
+    private Genre genre;
     
     public int getId() {
         return id;
@@ -44,4 +46,13 @@ public class Book {
     public void setAuthor(Author author) {
         this.author = author;
     }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
+    
 }
